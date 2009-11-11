@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Clear Key</title>
+    <link rel="stylesheet" href="style/main.css" type="text/css">
+  </head>
+  <body>
+    <h1>Clear Key</h1>
+    <form id="filter-form" method="post" action="">
+    <ul id="attributes"></ul>
+    <p><input type="submit" value="Filter" /></p>
+    </form>
+
+    <ul id="results"></ul>
+
+    <textarea class="tempest-template" title="attribute">
+    <li>{{ attribute }}: <input type="text" name="{{ attribute }}" /></li>
+    </textarea>
+
+    <textarea class="tempest-template" title="result">
+    <li>{{ doc }}</li>
+    </textarea>
+  </body>
+  <script src="/_utils/script/json2.js"></script>
+  <script src="/_utils/script/jquery.js?1.2.6"></script>
+  <script src="/_utils/script/jquery.couch.js?0.8.0"></script>
+  <script src="jquery.tempest.min.js"></script>
+  <script src="underscore.js"></script>
+  <script src="clearkey.js"></script>
+  <script type="text/javascript" charset="utf-8">
+    $(function() {
+      var attributes = [{name: "color"}, {name: "size", parser: parseInt}],
+          attribute_selector = "#attributes",
+          attribute_template = "attribute";
+      var clearkey = ClearKey(attributes,
+                              attribute_selector,
+                              attribute_template);
+      clearkey.load();
+      $("#filter-form").submit(clearkey.filter);
+    });
+  </script>
+</html>

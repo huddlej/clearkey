@@ -1,0 +1,43 @@
+Content-Type: multipart/mixed; boundary="==c0ef5e350e7048a39c3d756b91f23df8=="
+
+--==c0ef5e350e7048a39c3d756b91f23df8==
+Content-ID: 18c027d00ccc2063b549614b1b572a6c
+Content-Length: 156
+Content-MD5: Esg0dOQGN58oagOGGhA4iw==
+Content-Type: application/json;charset=utf-8
+ETag: "1-7ac075ee6636d1b4d8a241c8b7f5a3a5"
+
+{"name": "shirt 2", "color": "blue", "_rev": "1-7ac075ee6636d1b4d8a241c8b7f5a3a5", "_id": "18c027d00ccc2063b549614b1b572a6c", "type": "clothing", "size": 2}
+--==c0ef5e350e7048a39c3d756b91f23df8==
+Content-ID: b13750b96eabe76ea65fd7470831c2c5
+Content-Length: 155
+Content-MD5: DHyMU5/XadbCqyeNvL+jhQ==
+Content-Type: application/json;charset=utf-8
+ETag: "1-84989a6b63318746a3514c032045e8b3"
+
+{"name": "pants 3", "color": "red", "_rev": "1-84989a6b63318746a3514c032045e8b3", "_id": "b13750b96eabe76ea65fd7470831c2c5", "type": "clothing", "size": 2}
+--==c0ef5e350e7048a39c3d756b91f23df8==
+Content-ID: bc2f79d60aab76001a624463cd4c356d
+Content-Length: 157
+Content-MD5: gwemziIcsXYzSwIszaTN0A==
+Content-Type: application/json;charset=utf-8
+ETag: "1-1a0eafac07b27601d94122c28e749e7d"
+
+{"name": "pants 1", "color": "green", "_rev": "1-1a0eafac07b27601d94122c28e749e7d", "_id": "bc2f79d60aab76001a624463cd4c356d", "type": "clothing", "size": 1}
+--==c0ef5e350e7048a39c3d756b91f23df8==
+Content-ID: bc924a6f463959e8f5739fe3f68c12dd
+Content-Length: 155
+Content-MD5: gWom94A0UweXnHjb+VXFJQ==
+Content-Type: application/json;charset=utf-8
+ETag: "2-98f7b11b956fff7e9324b0dd534e69d3"
+
+{"name": "shirt 1", "color": "red", "_rev": "2-98f7b11b956fff7e9324b0dd534e69d3", "_id": "bc924a6f463959e8f5739fe3f68c12dd", "type": "clothing", "size": 1}
+--==c0ef5e350e7048a39c3d756b91f23df8==
+Content-ID: e15ec10ec5b57aa2a2f68a52082e56c8
+Content-Length: 157
+Content-MD5: yn6gS+k+vlOw+M5a/FFOyA==
+Content-Type: application/json;charset=utf-8
+ETag: "1-c2643a8c5ef36d91fc9fb92e87fc9aed"
+
+{"name": "pants 1", "color": "brown", "_rev": "1-c2643a8c5ef36d91fc9fb92e87fc9aed", "_id": "e15ec10ec5b57aa2a2f68a52082e56c8", "type": "clothing", "size": 2}
+--==c0ef5e350e7048a39c3d756b91f23df8==--
