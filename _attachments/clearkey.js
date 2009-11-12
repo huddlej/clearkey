@@ -46,12 +46,10 @@ function ClearKey(attributes, attribute_selector, attribute_template_name,
      * Processes and displays results of the filter request after all views have
      * been queried.
      */
-    function display_results() {
+    function display_results(results) {
         // The intersection of all ids returned by each view is the set of ids
         // that match each requested attribute.
-        ids = _.intersect.apply(_, _.values(ids_by_attribute));
-
-        console.log("found ids: " + ids);
+        ids = _.intersect.apply(_, results);
 
         // Get documents matching the calculated ids.
         if (ids.length > 0) {
@@ -83,59 +81,34 @@ function ClearKey(attributes, attribute_selector, attribute_template_name,
      * key.
      */
     function filter(event) {
-        var inputs = $(this).find("input:text"),
-            views_completed = 0,
-            views_total = 0,
-            view_data = [];
-
-        // Reset ids by attribute in preparation for next result set.
-        ids_by_attribute = {};
+        var views = [];
 
         // Prepare the results selector for new results.
         $(results_selector).empty();
 
-        // Find all inputs with values to filter by.
-        inputs.each(function (i) {
-            var filter = {name: this.name,
-                          value: this.value};
+        function view_success(response) {
+            return _.map(response["rows"],
+                         function (row) { return row["id"]; });
+        }
 
-            if (filter.value) {
-                if (parsers_by_attribute[filter.name]) {
-                    filter.value = parsers_by_attribute[filter.name](filter.value);
+        // Find all inputs with values to filter by.
+        $(this).find("input:text").each(function (i) {
+            var view;
+            if (this.value) {
+                view = {
+                    name: "clearkey/" + this.name,
+                    options: {key: this.value},
+                    success: view_success
+                };
+
+                if (parsers_by_attribute[this.name]) {
+                    view.options.key = parsers_by_attribute[this.name](this.value);
                 }
-                view_data.push(filter);
+                views.push(view);
             }
         });
 
-        // Filter by all values found in inputs.
-        views_total = view_data.length;
-        $.each(view_data, function(i) {
-            var name = this.name,
-                value = this.value;
-            ids_by_attribute[name] = [];
-            db.view(
-                "clearkey/" + name,
-                {
-                     key: value,
-                     success: function (response) {
-                        var i, row;
-                         for (i in response["rows"]) {
-                             row = response["rows"][i];
-                             ids_by_attribute[name].push(row["id"]);
-                         }
-                         console.log("found " + response["rows"].length + " ids");
-                         views_completed = views_completed + 1;
-                         console.log("views completed: " + views_completed);
-
-                         if (views_completed == views_total) {
-                             console.log("DONE LOADING VIEWS");
-                             display_results();
-                         }
-                     }
-                }
-            );
-        });
-
+        multiview(db, views, display_results);
         return false;
     }
 
@@ -149,18 +122,29 @@ function ClearKey(attributes, attribute_selector, attribute_template_name,
  * Takes a list of CouchDB view names and parameters, calls each view, collects
  * the results, and executes the given callback with the results.
  *
+ * Each view's success callback must accept a view response and return a value.
+ *
  * For example:
- * multiview([["mydesign/myview1",
- *             {key: "foo",
- *              success: success_callback}]],
- *             mycallback);
+ * multiview($.couch.db("mydb"),
+ *           [{name: "mydesign/myview1",
+ *             options: {key: "foo"},
+ *             success: success_callback}],
+ *           multiview_callback);
  */
-function multiview(views, callback) {
-    results = [];
+function multiview(db, views, callback) {
+    var results = [];
     $.each(views, function () {
-        db.view(
-            this[0],
-            this[1]
-        );
+        var view = this;
+        view.options.success = function (response) {
+            results.push(view.success(response));
+
+            // When the number of results matches the number of views, all views
+            // have finished running.
+            if (results.length == views.length) {
+                callback(results);
+            }
+        };
+
+        db.view(view.name, view.options);
     });
 }
