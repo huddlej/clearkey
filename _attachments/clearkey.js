@@ -11,10 +11,8 @@ function ClearKey(attributes, attribute_selector, attribute_template_name,
         db = $.couch.db("clearkey");
 
     function load() {
-        var i, attribute, template;
-        for (i in attributes) {
-            attribute = attributes[i];
-            
+        var template;
+        _.map(attributes, function (attribute) {
             if (attribute["parser"]) {
                 parsers_by_attribute[attribute["name"]] = attribute["parser"];
             }
@@ -22,7 +20,23 @@ function ClearKey(attributes, attribute_selector, attribute_template_name,
             template = $.tempest(attribute_template_name,
                                  {attribute: attribute["name"]});
             $(attribute_selector).append(template);
-        }
+
+            db.view(
+                "clearkey/" + attribute.name,
+                {
+                    group: true,
+                    success: function (response) {
+                        var results = _.map(
+                            response["rows"],
+                            function (row) {
+                                return row["key"];
+                            }
+                        );
+                        $("#" + attribute.name).append("<li>" + results + "</li>");
+                    }
+                }
+            );
+        });
     }
 
     /*
@@ -97,7 +111,8 @@ function ClearKey(attributes, attribute_selector, attribute_template_name,
             if (this.value) {
                 view = {
                     name: "clearkey/" + this.name,
-                    options: {key: this.value},
+                    options: {key: this.value,
+                              reduce: false},
                     success: view_success
                 };
 
