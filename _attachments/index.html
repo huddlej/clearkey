@@ -25,13 +25,18 @@
   <script src="clearkey.js"></script>
   <script type="text/javascript" charset="utf-8">
     $(function() {
-//      var db_name = "pnwmoths",
-//          attributes = [{name: "state"}, {name: "year"}],
       var db_name = "clearkey",
           attributes = [{name: "color"}, {name: "size", parser: parseInt}],
           attribute_selector = "#attributes",
           attribute_template = "attribute",
           display_attributes = ["name", "color", "size"];
+
+      var db_name = "pnwmoths",
+          attributes = [{name: "state"}, {name: "year"}],
+          attribute_selector = "#attributes",
+          attribute_template = "attribute",
+          display_attributes = ["genus", "species", "state", "year"];
+
       var clearkey = ClearKey(db_name,
                               attributes,
                               display_attributes,
