@@ -1,4 +1,4 @@
-function ClearKey(attributes, attribute_selector, attribute_template_name,
+function ClearKey(db_name, attributes, attribute_selector, attribute_template_name,
                   results_selector, result_template_name) {
     var attributes = attributes || [],
         attribute_selector = attribute_selector || "#attributes",
@@ -8,7 +8,8 @@ function ClearKey(attributes, attribute_selector, attribute_template_name,
         ids_by_attribute = {},
         ids,
         parsers_by_attribute = {},
-        db = $.couch.db("clearkey");
+        db = $.couch.db(db_name),
+        design_name = db_name;
 
     function load() {
         var template;
@@ -22,7 +23,7 @@ function ClearKey(attributes, attribute_selector, attribute_template_name,
             $(attribute_selector).append(template);
 
             db.view(
-                "clearkey/" + attribute.name,
+                design_name + "/" + attribute.name,
                 {
                     group: true,
                     success: function (response) {
@@ -110,7 +111,7 @@ function ClearKey(attributes, attribute_selector, attribute_template_name,
             var view;
             if (this.value) {
                 view = {
-                    name: "clearkey/" + this.name,
+                    name: design_name + "/" + this.name,
                     options: {key: this.value,
                               reduce: false},
                     success: view_success
