@@ -1,6 +1,7 @@
-function ClearKey(db_name, attributes, attribute_selector, attribute_template_name,
+function ClearKey(db_name, attributes, display_attributes, attribute_selector, attribute_template_name,
                   results_selector, result_template_name) {
     var attributes = attributes || [],
+        display_attributes = display_attributes || [],
         attribute_selector = attribute_selector || "#attributes",
         attribute_template_name = attribute_template_name || "attribute",
         results_selector = results_selector || "#results",
@@ -12,7 +13,7 @@ function ClearKey(db_name, attributes, attribute_selector, attribute_template_na
         design_name = db_name;
 
     function load() {
-        var template;
+        var template, row;
         _.map(attributes, function (attribute) {
             if (attribute["parser"]) {
                 parsers_by_attribute[attribute["name"]] = attribute["parser"];
@@ -68,25 +69,30 @@ function ClearKey(db_name, attributes, attribute_selector, attribute_template_na
 
         // Get documents matching the calculated ids.
         if (ids.length > 0) {
+            // Build results table header.
+            row = $("<tr></tr>");
+            _.map(display_attributes, function (attribute) {
+                row.append("<th>" + attribute + "</th>");
+            });
+            $(results_selector).append(row);
+
             bulk_fetch_docs(
                 ids,
                 function (response) {
-                    var i, doc;
+                    var i, doc, row;
                     for (i in response["rows"]) {
                         doc = response["rows"][i].doc;
-                        $(results_selector).append(
-                            $.tempest(result_template_name,
-                                      {doc: JSON.stringify(doc)})
-                        );
+                        row = $("<tr></tr>");
+                        _.map(display_attributes, function (attribute) {
+                            row.append($("<td>" + doc[attribute] + "</td>"));
+                        });
+                        $(results_selector).append(row);
                     }
                 }
             );
         }
         else {
-            $(results_selector).append(
-                $.tempest(result_template_name,
-                          {doc: "No ids found."})
-            );
+            $(results_selector).append("<tr><td>No ids found.</td></tr>");
         }
     }
 

@@ -11,14 +11,10 @@
     <p><input type="submit" value="Filter" /></p>
     </form>
 
-    <ul id="results"></ul>
+    <table id="results"></table>
 
     <textarea class="tempest-template" title="attribute">
     <li id="{{ attribute }}">{{ attribute }}: <input type="text" name="{{ attribute }}" /></li>
-    </textarea>
-
-    <textarea class="tempest-template" title="result">
-    <li>{{ doc }}</li>
     </textarea>
   </body>
   <script src="/_utils/script/json2.js"></script>
@@ -34,9 +30,11 @@
       var db_name = "clearkey",
           attributes = [{name: "color"}, {name: "size", parser: parseInt}],
           attribute_selector = "#attributes",
-          attribute_template = "attribute";
+          attribute_template = "attribute",
+          display_attributes = ["name", "color", "size"];
       var clearkey = ClearKey(db_name,
                               attributes,
+                              display_attributes,
                               attribute_selector,
                               attribute_template);
       clearkey.load();
