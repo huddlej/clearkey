@@ -56,7 +56,9 @@ function ClearKey(db_name, attribute_selector, attribute_template_name,
                                 return row["key"];
                             }
                         );
-                        $("#" + attribute.name).append("<li>" + results + "</li>");
+
+                        // Setup autocomplete for this view's input field.
+                        $(":input[name=" + attribute.name + "]").autocomplete(results);
                     }
                 }
             );
