@@ -50,7 +50,8 @@ function ClearKey(db_name, attribute_selector, attribute_template_name,
                 {
                     group: true,
                     success: function (response) {
-                        var results = _.map(
+                        var results, autocomplete_options;
+                        results = _.map(
                             response["rows"],
                             function (row) {
                                 return row["key"];
@@ -58,7 +59,16 @@ function ClearKey(db_name, attribute_selector, attribute_template_name,
                         );
 
                         // Setup autocomplete for this view's input field.
-                        $(":input[name=" + attribute.name + "]").autocomplete(results);
+                        autocomplete_options = {
+                            formatItem: function (item) {
+                                return String(item);
+                            },
+                            minChars: 0
+                        };
+                        $(":input[name=" + attribute.name + "]").autocomplete(
+                            results,
+                            autocomplete_options
+                        );
                     }
                 }
             );
