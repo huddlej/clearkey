@@ -5,6 +5,7 @@ Unstarted
 ---------
 
 * Automatically create map/reduce for attributes
+* Dynamically change databases from main interface
 
 Completed
 ---------
