@@ -1,7 +1,7 @@
-function ClearKey(db_name, attributes, display_attributes, attribute_selector, attribute_template_name,
+function ClearKey(db_name, attribute_selector, attribute_template_name,
                   results_selector, result_template_name) {
-    var attributes = attributes || [],
-        display_attributes = display_attributes || [],
+    var attributes = [],
+        display_attributes = [],
         attribute_selector = attribute_selector || "#attributes",
         attribute_template_name = attribute_template_name || "attribute",
         results_selector = results_selector || "#results",
@@ -10,13 +10,29 @@ function ClearKey(db_name, attributes, display_attributes, attribute_selector, a
         ids,
         parsers_by_attribute = {},
         db = $.couch.db(db_name),
-        design_name = db_name;
+        design_name = "clearkey";
 
     function load() {
+        // Get the clearkey design doc for the given database. The doc contains
+        // all clearkey views and configuration parameters.
+        db.openDoc(
+            "_design/" + design_name,
+            {
+                success: function (response) {
+                    var config = response.config;
+                    attributes = config.attributes;
+                    display_attributes = config.display_attributes;
+                    prepare_attributes();
+                }
+            }
+        );
+    }
+
+    function prepare_attributes() {
         var template, row;
         _.map(attributes, function (attribute) {
             if (attribute["parser"]) {
-                parsers_by_attribute[attribute["name"]] = attribute["parser"];
+                parsers_by_attribute[attribute["name"]] = eval(attribute["parser"]);
             }
 
             template = $.tempest(attribute_template_name,
