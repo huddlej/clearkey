@@ -6,8 +6,8 @@ function ClearKey(db_name, attribute_selector, attribute_template_name,
         attribute_template_name = attribute_template_name || "attribute",
         results_selector = results_selector || "#results",
         result_template_name = result_template_name || "result",
-        ids_by_attribute = {},
         ids,
+        parsers_by_type = {"number": parseInt},
         parsers_by_attribute = {},
         db = $.couch.db(db_name),
         design_name = "clearkey";
@@ -37,10 +37,6 @@ function ClearKey(db_name, attribute_selector, attribute_template_name,
     function prepare_attributes() {
         var template, row;
         _.map(attributes, function (attribute) {
-            if (attribute["parser"]) {
-                parsers_by_attribute[attribute["name"]] = eval(attribute["parser"]);
-            }
-
             template = $.tempest(attribute_template_name,
                                  {attribute: attribute["name"]});
             $(attribute_selector).append(template);
@@ -50,13 +46,20 @@ function ClearKey(db_name, attribute_selector, attribute_template_name,
                 {
                     group: true,
                     success: function (response) {
-                        var results, autocomplete_options;
+                        var results, autocomplete_options, result_type;
                         results = _.map(
                             response["rows"],
                             function (row) {
                                 return row["key"];
                             }
                         );
+
+                        // Determine the type of the field by the first value
+                        // returned by its view.
+                        result_type = typeof(results[0]);
+                        if (parsers_by_type[result_type]) {
+                            parsers_by_attribute[attribute.name] = parsers_by_type[result_type];
+                        }
 
                         // Setup autocomplete for this view's input field.
                         autocomplete_options = {
