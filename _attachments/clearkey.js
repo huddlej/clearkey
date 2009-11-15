@@ -12,9 +12,11 @@ function ClearKey(db_name, attribute_selector, attribute_template_name,
         db = $.couch.db(db_name),
         design_name = "clearkey";
 
+    /* 
+     * Get the clearkey design doc for the given database. The doc contains all
+     * clearkey views and configuration parameters.
+     */
     function load() {
-        // Get the clearkey design doc for the given database. The doc contains
-        // all clearkey views and configuration parameters.
         db.openDoc(
             "_design/" + design_name,
             {
@@ -28,6 +30,10 @@ function ClearKey(db_name, attribute_selector, attribute_template_name,
         );
     }
 
+    /*
+     * Prepares filter forms and unique value sets for all attributes to be
+     * filtered on.
+     */
     function prepare_attributes() {
         var template, row;
         _.map(attributes, function (attribute) {
