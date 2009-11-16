@@ -21,23 +21,49 @@ function ClearKey(db_name, attribute_selector, attribute_template_name,
             "_design/" + design_name,
             {
                 success: function (response) {
-                    var config = response.config;
+                    var config = response.config,
+                        views,
+                        views_added = false;
                     attributes = config.attributes;
                     display_attributes = config.display_attributes;
-                    prepare_attributes();
+
+                    // Find any attributes that are missing a map/reduce view
+                    // and create views for those attributes.
+                    if (!response.views) {
+                        response.views = {};
+                    }
+
+                    _.each(attributes, function (attribute) {
+                        if (!response.views[attribute.name]) {
+                            views = create_attribute_views(attribute.name);
+                            response.views[attribute.name] = views;
+                            views_added = true;
+                        }
+                    });
+
+                    // If any views have been added, save the design document
+                    // before continuing to prepare the attributes in the
+                    // filter.  Otherwise, prepare attributes immediately.
+                    if (views_added) {
+                        db.saveDoc(response,
+                                   {
+                                       success: function () {
+                                           prepare_attributes();
+                                       }
+                                   });
+                    }
+                    else {
+                        prepare_attributes();   
+                    }
                 }
             }
         );
     }
 
-    function create_attribute_view(attribute_name) {
-        var map_template = "function (doc) {"
-                           + "if (doc[{{ attribute_name }}]) {"
-                           + "emit(doc[{{ attribute_name }}], null);"
-                           + "}"
-                           + "}",
-            reduce_view = "function (keys, values) { return null; }",
-            map_view = $.tempest(map_template, {"attribute_name": attribute_name});
+    function create_attribute_views(attribute_name) {
+        var map_view = "function (doc) { if (doc[\"" + attribute_name + "\"]) { emit(doc[\"" + attribute_name + "\"], null); }}",
+            reduce_view = "function (keys, values) { return null; }";
+        return {"map": map_view, "reduce": reduce_view};
     }
 
     /*
@@ -82,9 +108,6 @@ function ClearKey(db_name, attribute_selector, attribute_template_name,
                             results,
                             autocomplete_options
                         );
-                    },
-                    error: function() {
-                        console.log(arguments);
                     }
                 }
             );
