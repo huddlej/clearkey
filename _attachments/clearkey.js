@@ -30,6 +30,16 @@ function ClearKey(db_name, attribute_selector, attribute_template_name,
         );
     }
 
+    function create_attribute_view(attribute_name) {
+        var map_template = "function (doc) {"
+                           + "if (doc[{{ attribute_name }}]) {"
+                           + "emit(doc[{{ attribute_name }}], null);"
+                           + "}"
+                           + "}",
+            reduce_view = "function (keys, values) { return null; }",
+            map_view = $.tempest(map_template, {"attribute_name": attribute_name});
+    }
+
     /*
      * Prepares filter forms and unique value sets for all attributes to be
      * filtered on.
@@ -72,6 +82,9 @@ function ClearKey(db_name, attribute_selector, attribute_template_name,
                             results,
                             autocomplete_options
                         );
+                    },
+                    error: function() {
+                        console.log(arguments);
                     }
                 }
             );

@@ -1,2 +1,2 @@
-{"attributes": [{"name": "color"}, {"name": "size", "parser": "parseInt"}],
+{"attributes": [{"name": "color"}, {"name": "size"}, {"name": "name"}],
  "display_attributes": ["name", "color", "size"]}
