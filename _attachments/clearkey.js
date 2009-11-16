@@ -1,4 +1,4 @@
-function ClearKey(db_name, attribute_selector, attribute_template_name,
+function ClearKey(db_names, attribute_selector, attribute_template_name,
                   results_selector, result_template_name) {
     var attributes = [],
         display_attributes = [],
@@ -9,14 +9,14 @@ function ClearKey(db_name, attribute_selector, attribute_template_name,
         ids,
         parsers_by_type = {"number": parseInt},
         parsers_by_attribute = {},
-        db = $.couch.db(db_name),
+        db,
         design_name = "clearkey";
 
-    /* 
-     * Get the clearkey design doc for the given database. The doc contains all
-     * clearkey views and configuration parameters.
+    /*
+     * Set current database.
      */
-    function load() {
+    function set_db(db_name) {
+        db = $.couch.db(db_name);
         db.openDoc(
             "_design/" + design_name,
             {
@@ -60,6 +60,28 @@ function ClearKey(db_name, attribute_selector, attribute_template_name,
         );
     }
 
+    /* 
+     * Get the clearkey design doc for the given database. The doc contains all
+     * clearkey views and configuration parameters.
+     */
+    function load() {
+        var form, input;
+        form = $("<form id=\"select-db\"></form>");
+        input = $("<select id=\"db\"></select>");
+        _.each(db_names, function (db_name) {
+            input.append($("<option value=\"" + db_name + "\">" + db_name + "</option>"));
+        });
+
+        input.change(function (event) {
+                         console.log($(this).val());
+                         set_db($(this).val());
+                     });
+        form.append(input);
+        $("h1#title").append(form);
+
+        set_db(db_names[0]);
+    }
+
     function create_attribute_views(attribute_name) {
         var map_view = "function (doc) { if (doc[\"" + attribute_name + "\"]) { emit(doc[\"" + attribute_name + "\"], null); }}",
             reduce_view = "function (keys, values) { return null; }";
@@ -72,6 +94,8 @@ function ClearKey(db_name, attribute_selector, attribute_template_name,
      */
     function prepare_attributes() {
         var template, row;
+
+        $(attribute_selector).empty();
         _.each(attributes, function (attribute) {
             template = $.tempest(attribute_template_name,
                                  {attribute: attribute["name"]});

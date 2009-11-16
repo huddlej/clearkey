@@ -27,15 +27,14 @@
   <script src="clearkey.js"></script>
   <script type="text/javascript" charset="utf-8">
     $(function() {
-      var db_name = "clearkey",
+      var db_names = ["clearkey", "pnwmoths"],
           attribute_selector = "#attributes",
           attribute_template = "attribute";
-      var clearkey = ClearKey(db_name,
+      var clearkey = ClearKey(db_names,
                               attribute_selector,
                               attribute_template);
       clearkey.load();
       $("#filter-form").submit(clearkey.filter);
-      $("h1#title").append(": " + db_name);
     });
   </script>
 </html>
