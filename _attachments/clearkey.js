@@ -72,7 +72,7 @@ function ClearKey(db_name, attribute_selector, attribute_template_name,
      */
     function prepare_attributes() {
         var template, row;
-        _.map(attributes, function (attribute) {
+        _.each(attributes, function (attribute) {
             template = $.tempest(attribute_template_name,
                                  {attribute: attribute["name"]});
             $(attribute_selector).append(template);
@@ -144,7 +144,7 @@ function ClearKey(db_name, attribute_selector, attribute_template_name,
         if (ids.length > 0) {
             // Build results table header.
             row = $("<tr></tr>");
-            _.map(display_attributes, function (attribute) {
+            _.each(display_attributes, function (attribute) {
                 row.append("<th>" + attribute + "</th>");
             });
             $(results_selector).append(row);
@@ -156,7 +156,7 @@ function ClearKey(db_name, attribute_selector, attribute_template_name,
                     for (i in response["rows"]) {
                         doc = response["rows"][i].doc;
                         row = $("<tr></tr>");
-                        _.map(display_attributes, function (attribute) {
+                        _.each(display_attributes, function (attribute) {
                             row.append($("<td>" + doc[attribute] + "</td>"));
                         });
                         $(results_selector).append(row);
