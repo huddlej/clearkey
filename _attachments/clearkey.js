@@ -44,7 +44,7 @@ function ClearKey(db_name, attribute_selector, attribute_template_name,
                     // If any views have been added, save the design document
                     // before continuing to prepare the attributes in the
                     // filter.  Otherwise, prepare attributes immediately.
-                    if (views_added) {
+                    if (views_added === true) {
                         db.saveDoc(response,
                                    {
                                        success: function () {
