@@ -73,7 +73,6 @@ function ClearKey(db_names, attribute_selector, attribute_template_name,
         });
 
         input.change(function (event) {
-                         console.log($(this).val());
                          set_db($(this).val());
                      });
         form.append(input);
@@ -231,8 +230,10 @@ function ClearKey(db_names, attribute_selector, attribute_template_name,
         return false;
     }
 
+    // Prepare the key for use.
+    load();
+
     return {
-        load: load,
         filter: filter
     };
 }
